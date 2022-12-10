@@ -22,7 +22,7 @@ import java.util.List;
 @Slf4j
 public class AddrBookController {
 
-    // Declaring a list of person which are added, updated or deleted.
+    // Declaring a list of person which will be added, updated or deleted.
     private List<Person> persons = new ArrayList<>();
 
     @Autowired // Automatic dependency injection.
@@ -36,7 +36,7 @@ public class AddrBookController {
 
         // Adding a new person to list.
         persons.add(person);
-        ResponseDTO responseDTO = new ResponseDTO("Person contact saved successfully!", person);
+        ResponseDTO responseDTO = new ResponseDTO("Person contact saved successfully!", person, service.getToken(person.getId()));
 
         // returning configured HTTP response.
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
@@ -47,7 +47,17 @@ public class AddrBookController {
     public ResponseEntity<ResponseDTO> getPerson(@RequestParam int id) {
 
         Person person = service.selectPerson(id);
-        ResponseDTO responseDTO = new ResponseDTO("Person '" + id + "' Profile: ", person);
+        ResponseDTO responseDTO = new ResponseDTO("Person '" + id + "' Profile: ", person, service.getToken(id));
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
+    // Api to handle get request by Person token.
+    // Overloaded Method.
+    @GetMapping("/getbytoken")
+    public ResponseEntity<ResponseDTO> getPerson(@RequestParam String token) {
+
+        Person person = service.selectPerson(token);
+        ResponseDTO responseDTO = new ResponseDTO("Person '" + person.getId() + "' Profile: ", person, token);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
@@ -59,7 +69,22 @@ public class AddrBookController {
         // Adding an updated person to list.
         persons.add(person);
 
-        ResponseDTO responseDTO = new ResponseDTO("Person details updated successfully!", person);
+        ResponseDTO responseDTO = new ResponseDTO("Person details updated successfully!", person, service.getToken(id));
+
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+
+    }
+
+    // Api to handle put request by token.
+    // Overloaded Method.
+    @PutMapping("/putbytoken")
+    public ResponseEntity<ResponseDTO> putPerson(@Valid @RequestParam String token, @RequestBody PersonDTO personDTO) {
+        Person person = service.updatePerson(token, personDTO);
+
+        // Adding an updated person to list.
+        persons.add(person);
+
+        ResponseDTO responseDTO = new ResponseDTO("Person details updated successfully!", person, token);
 
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
 
@@ -73,7 +98,20 @@ public class AddrBookController {
         // Adding an deleted person to a list.
         persons.add(person);
 
-        ResponseDTO responseDTO = new ResponseDTO("Person '" + id + "' contact deleted successfully!", person);
+        ResponseDTO responseDTO = new ResponseDTO("Person '" + id + "' contact deleted successfully!", person, service.getToken(id));
+
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
+    // Api to handle delete request by Person token.
+    @DeleteMapping("/deletebytoken")
+    public ResponseEntity<ResponseDTO> deletePerson(@RequestParam String token) {
+        Person person = service.deletePerson(token);
+
+        // Adding an deleted person to a list.
+        persons.add(person);
+
+        ResponseDTO responseDTO = new ResponseDTO("Person '" + person.getId() + "' contact deleted successfully!", person, token);
 
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
@@ -82,15 +120,16 @@ public class AddrBookController {
     @GetMapping("/getall")
     public ResponseEntity<ResponseDTO> getAllPerson() {
         List<Person> persons = service.selectAllPerson();
-        ResponseDTO responseDTO = new ResponseDTO("Profile of all Persons: ", persons);
+        ResponseDTO responseDTO = new ResponseDTO("Profile of all Persons: ", persons, null);
 
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
+    //    Api to get person by name.
     @GetMapping("/getbyname")
     public ResponseEntity<ResponseDTO> getPersonByName(@RequestParam String fname, String lname) {
         List<Person> persons = service.findPersonByName(fname, lname);
-        ResponseDTO responseDTO = new ResponseDTO("Profile of 'Persons' having same name: ", persons);
+        ResponseDTO responseDTO = new ResponseDTO("Profile of 'Persons' having same name: ", persons, null);
 
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }

@@ -4,6 +4,7 @@ import com.book.address.dto.PersonDTO;
 import com.book.address.exception.AddrBookException;
 import com.book.address.model.Person;
 import com.book.address.repository.IAddrBookRepo;
+import com.book.address.util.PersonToken;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,14 @@ public class AddrBookService implements IAddrBookService {
 
     @Autowired // Automatic Dependency Injection.
     IAddrBookRepo addrBookRepo;
+
+    @Autowired
+    PersonToken personToken;
+
+    // Getting token from person id.
+    public String getToken(int personId) {
+        return personToken.createToken(personId);
+    }
 
     // Inserting a new Person in repo.
     @Override
@@ -73,5 +82,26 @@ public class AddrBookService implements IAddrBookService {
     @Override
     public List<Person> findPersonByName(String fname, String lname) {
         return addrBookRepo.findByPersonName(fname, lname);
+    }
+
+    // Getting Id from token.
+    private int getIdFromToken(String token) {
+        return personToken.decodeToken(token);
+    }
+
+    // Getting a Person by token.
+    @Override // Method overloading works here.
+    public Person selectPerson(String token) {
+        return selectPerson(getIdFromToken(token));
+    }
+
+    @Override
+    public Person updatePerson(String token, PersonDTO personDTO) {
+        return updatePerson(getIdFromToken(token), personDTO);
+    }
+
+    @Override
+    public Person deletePerson(String token) {
+        return deletePerson(getIdFromToken(token));
     }
 }

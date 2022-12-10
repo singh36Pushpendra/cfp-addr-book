@@ -9,4 +9,5 @@ import lombok.Getter;
 public class ResponseDTO {
     private String message;
     private Object data;
+    private String token;
 }

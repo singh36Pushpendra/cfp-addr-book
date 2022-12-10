@@ -29,7 +29,7 @@ public class AddrBookExceptionHandler {
         List<String> errMsg = allErrors.stream()
                 .map(objErr -> objErr.getDefaultMessage()).collect(Collectors.toList());
 
-        ResponseDTO responseDTO = new ResponseDTO(MSG, errMsg);
+        ResponseDTO responseDTO = new ResponseDTO(MSG, errMsg, null);
 
         return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
 
@@ -38,7 +38,7 @@ public class AddrBookExceptionHandler {
     // Handling custom exception.
     @ExceptionHandler(AddrBookException.class)
     public ResponseEntity<ResponseDTO> handleAddrBookException(AddrBookException exception) {
-        ResponseDTO responseDTO = new ResponseDTO(MSG, exception.getMessage());
+        ResponseDTO responseDTO = new ResponseDTO(MSG, exception.getMessage(), null);
 
         return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
     }
