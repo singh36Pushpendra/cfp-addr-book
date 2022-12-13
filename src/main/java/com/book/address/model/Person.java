@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,7 +30,7 @@ public class Person {
 
     private long phoneNum;
 
-    private String address, city, state;
+    private String email, address, city, state;
 
     private int zipCode;
 
@@ -37,10 +38,16 @@ public class Person {
         log.info("This is inside 'Person' class constructor!");
         fname = personDTO.fname;
         lname = personDTO.lname;
-        phoneNum = personDTO.phoneNum;
+
+        // Converting java.lang.String to long type.
+        phoneNum = Long.parseLong(personDTO.phoneNum);
+
+        email = personDTO.email;
         address = personDTO.address;
         city = personDTO.city;
         state = personDTO.state;
-        zipCode = personDTO.zipCode;
+
+        // Converting java.lang.String to int type.
+        zipCode = Integer.parseInt(personDTO.zipCode);
     }
 }

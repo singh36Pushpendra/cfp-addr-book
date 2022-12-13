@@ -2,8 +2,10 @@ package com.book.address.controller;
 
 import com.book.address.dto.PersonDTO;
 import com.book.address.dto.ResponseDTO;
+import com.book.address.model.Email;
 import com.book.address.model.Person;
 import com.book.address.service.IAddrBookService;
+import com.book.address.service.IEmailService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,9 @@ public class AddrBookController {
     @Autowired // Automatic dependency injection.
     IAddrBookService service;
 
+    @Autowired
+    IEmailService emailService;
+
     // Api to handle post request.
     @PostMapping("/post")
     public ResponseEntity<ResponseDTO> postPerson(@Valid @RequestBody PersonDTO personDTO) {
@@ -36,7 +41,12 @@ public class AddrBookController {
 
         // Adding a new person to list.
         persons.add(person);
-        ResponseDTO responseDTO = new ResponseDTO("Person contact saved successfully!", person, service.getToken(person.getId()));
+
+        String token = service.getToken(person.getId());
+        ResponseDTO responseDTO = new ResponseDTO("Person contact saved successfully!", person, token);
+        Email email = new Email(person.getEmail(), "Message For Code Checking!", token);
+
+        emailService.sendMail(email);
 
         // returning configured HTTP response.
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
@@ -132,5 +142,12 @@ public class AddrBookController {
         ResponseDTO responseDTO = new ResponseDTO("Profile of 'Persons' having same name: ", persons, null);
 
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+    }
+
+    // Api to send mail.
+    @PostMapping("/sendmail")
+    public Email sendMyMail(@RequestBody Email email) {
+        emailService.sendMail(email);
+        return email;
     }
 }

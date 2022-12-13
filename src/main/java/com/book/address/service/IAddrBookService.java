@@ -1,7 +1,10 @@
 package com.book.address.service;
 
 import com.book.address.dto.PersonDTO;
+import com.book.address.dto.ResponseDTO;
+import com.book.address.model.Email;
 import com.book.address.model.Person;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -32,4 +35,5 @@ public interface IAddrBookService {
 
     // Abstract method to get token from person id.
     String getToken(int personId);
+
 }

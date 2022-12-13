@@ -104,4 +104,5 @@ public class AddrBookService implements IAddrBookService {
     public Person deletePerson(String token) {
         return deletePerson(getIdFromToken(token));
     }
+
 }
